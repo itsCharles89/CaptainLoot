@@ -23,6 +23,7 @@ namespace CaptainLoot
 
         internal static AudioClip[] newFartSFX;
         internal static AudioClip[] newRoarSFX;
+        internal static AudioClip[] newMusicAudios;
 
         void Awake()
         {
@@ -39,6 +40,7 @@ namespace CaptainLoot
             string pluginPath = dllPath.TrimEnd(dllName.ToCharArray());
             string assetPath = pluginPath + "captainlootaudio";
             string assetPathWorm = pluginPath + "captainlootworm";
+            string assetPathMusic = pluginPath + "captainlootmusic";
 
             //Whoopie Patch
             AssetBundle valFarts = AssetBundle.LoadFromFile(assetPath);
@@ -65,7 +67,19 @@ namespace CaptainLoot
             harmony.PatchAll(typeof(SandwormPatch));
             //harmony.PatchAll();
 
+            //Boombox Item
+            AssetBundle valMusic = AssetBundle.LoadFromFile(assetPathMusic);
+            if (valMusic == null)
+            {
+                mls.LogError("Failed to load audio assets!");
+                return;
+            }
+            newMusicAudios = valMusic.LoadAssetWithSubAssets<AudioClip>("assets/jerrod.wav");
 
+
+            harmony.PatchAll(typeof(WhoopieItemPatch));
+            harmony.PatchAll(typeof(SandwormPatch));
+            harmony.PatchAll(typeof(BoomboxPatch));
 
             mls.LogInfo($"{modGUID} is loaded. Loot Away!!!");
         }
